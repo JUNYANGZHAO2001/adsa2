@@ -45,8 +45,8 @@ public:
             root->left = insert(root->left, key);
         else if (key > root->key)
             root->right = insert(root->right, key);
-        else // duplicate
-            return root;
+        else
+            return root; // duplicate
 
         root->height = 1 + max(height(root->left), height(root->right));
         int balance = getBalance(root);
@@ -71,10 +71,10 @@ public:
         return root;
     }
 
-    Node* minValueNode(Node* node) {
+    Node* maxValueNode(Node* node) {
         Node* current = node;
-        while (current->left)
-            current = current->left;
+        while (current->right)
+            current = current->right;
         return current;
     }
 
@@ -86,6 +86,7 @@ public:
         else if (key > root->key)
             root->right = deleteNode(root->right, key);
         else {
+            // Node with only one child or no child
             if (!root->left || !root->right) {
                 Node* temp = root->left ? root->left : root->right;
                 if (!temp) {
@@ -96,9 +97,10 @@ public:
                 }
                 delete temp;
             } else {
-                Node* temp = minValueNode(root->right);
+                // Node with two children: use **in-order predecessor**
+                Node* temp = maxValueNode(root->left);
                 root->key = temp->key;
-                root->right = deleteNode(root->right, temp->key);
+                root->left = deleteNode(root->left, temp->key);
             }
         }
 
